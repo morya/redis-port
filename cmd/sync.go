@@ -209,7 +209,12 @@ func (cmd *cmdSync) SyncRDBFile(reader *bufio.Reader, target, passwd string, nsi
 							lastdb = e.DB
 							selectDB(c, lastdb)
 						}
-						restoreRdbEntry(c, e)
+						if len(e.Value) > 512*1024*1024 {
+							s := e.Value[:1024]
+							fmt.Printf(">>>>>>>>>>>>> key:[%s] %v, has value len=%d, value dump=%v\n", e.Key, e.Key, len(e.Value), s)
+						} else {
+							restoreRdbEntry(c, e)
+						}
 					}
 				}
 			}()
